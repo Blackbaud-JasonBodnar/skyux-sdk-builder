@@ -18,15 +18,7 @@ function outPath() {
 
 function getWebpackConfig(skyPagesConfig, argv) {
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
-  const argvCoverage = (argv) ? argv.coverage : true;
-  const runCoverage = (argvCoverage !== false);
-
-  let srcPath;
-  if (argvCoverage === 'library') {
-    srcPath = path.resolve(process.cwd(), 'src', 'app', 'public');
-  } else {
-    srcPath = path.resolve(process.cwd(), 'src', 'app');
-  }
+  const srcPath = path.resolve(process.cwd(), 'src', 'app');
 
   const resolves = [
     process.cwd(),
@@ -161,33 +153,6 @@ function getWebpackConfig(skyPagesConfig, argv) {
       )
     ]
   };
-
-  if (runCoverage) {
-    config.module.rules.push({
-      enforce: 'post',
-      test: /\.(js|ts)$/,
-      use: [
-        {
-          loader: 'istanbul-instrumenter-loader',
-          options: {
-            esModules: true
-          }
-        },
-        {
-          loader: 'source-map-inline-loader'
-        }
-      ],
-      include: srcPath,
-      exclude: [
-        /\.(e2e|spec)\.ts$/,
-        /(\\|\/)node_modules(\\|\/)/,
-        /(\\|\/)index\.ts/,
-        /(\\|\/)fixtures(\\|\/)/,
-        /(\\|\/)testing(\\|\/)/,
-        /(\\|\/)src(\\|\/)app(\\|\/)lib(\\|\/)/
-      ]
-    });
-  }
 
   return config;
 }
