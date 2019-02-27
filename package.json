@@ -84,7 +84,6 @@
     "karma-chrome-launcher": "2.2.0",
     "karma-jasmine": "1.1.2",
     "karma-mocha-reporter": "2.2.5",
-    "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "4.0.0-rc.6",
     "loader-utils": "1.2.3",
     "lodash.get": "4.4.2",

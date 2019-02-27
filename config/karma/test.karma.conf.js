@@ -10,19 +10,23 @@ function getConfig(config) {
   require('./shared.karma.conf')(config);
   let configuration = {
     browsers: [
-      'Chrome'
+      'HeadlessChrome'
     ],
     customLaunchers: {
-      Chrome_travis_ci: {
-        base: 'Chrome',
-        flags: ['--no-sandbox']
+      HeadlessChrome: {
+        base: 'ChromeHeadless',
+        flags: [
+          '--disable-setuid-sandbox',
+          '--disable-web-security',
+          '--disable-gpu',
+          '--hide-scrollbars',
+          '--ignore-certificate-errors',
+          '--no-sandbox'
+        ]
       }
-    }
+    },
+    concurrency: Infinity
   };
-
-  if (process.env.TRAVIS) {
-    configuration.browsers = ['Chrome_travis_ci'];
-  }
 
   config.set(configuration);
 }

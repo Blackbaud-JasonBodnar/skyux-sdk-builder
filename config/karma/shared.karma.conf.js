@@ -28,7 +28,7 @@ function getConfig(config) {
   const preprocessors = {};
 
   preprocessors[polyfillsBundle] = ['webpack'];
-  preprocessors[specBundle] = ['webpack', 'sourcemap'];
+  preprocessors[specBundle] = ['webpack'];
   preprocessors[specStyles] = ['webpack'];
 
   config.set({

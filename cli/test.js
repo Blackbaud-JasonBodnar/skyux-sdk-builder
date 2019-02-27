@@ -32,12 +32,8 @@ function test(command, argv) {
 
   const onRunComplete = () => {
     if (lintResult && lintResult.exitCode > 0) {
-      // Pull the logger out of the execution stream to let it print
-      // after karma's coverage reporter.
-      setTimeout(() => {
-        logger.error('Process failed due to linting errors:');
-        lintResult.errors.forEach(error => logger.error(error));
-      }, 10);
+      logger.error('Process failed due to linting errors:');
+      lintResult.errors.forEach(error => logger.error(error));
     }
   };
 
