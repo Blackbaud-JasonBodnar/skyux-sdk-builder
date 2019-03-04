@@ -14,41 +14,27 @@ const flags = [
   '**/node_modules/**/*.ts'
 ];
 
-function lintSync() {
+function lint() {
   logger.info('Starting TSLint...');
 
-  const spawnResult = spawn.sync('./node_modules/.bin/tslint', flags);
+  const cp = spawn('./node_modules/.bin/tslint', flags);
 
-  // Convert buffers to strings.
-  let output = [];
-  spawnResult.output.forEach((buffer) => {
-    if (buffer === null) {
-      return;
-    }
+  return new Promise((resolve) => {
+    cp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`);
+    });
 
-    const str = buffer.toString().trim();
-    if (str) {
-      output.push(str);
-    }
+    cp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`);
+    });
+
+    cp.on('close', (code) => {
+      console.log(`child process exited with code ${code}`);
+      resolve();
+    });
   });
-
-  // Convert multi-line errors into single errors.
-  let errors = [];
-  output.forEach((str) => {
-    errors = errors.concat(str.split(/\r?\n/));
-  });
-
-  // Print linting results to console.
-  errors.forEach(error => logger.error(error));
-  const plural = (errors.length === 1) ? '' : 's';
-  logger.info(`TSLint finished with ${errors.length} error${plural}.`);
-
-  return {
-    exitCode: spawnResult.status,
-    errors: errors
-  };
 }
 
 module.exports = {
-  lintSync
+  lint
 };

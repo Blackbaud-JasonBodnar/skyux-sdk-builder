@@ -23,38 +23,27 @@ function test(command, argv) {
   const specsPath = path.resolve(process.cwd(), 'src/app/**/*.spec.ts');
   const specsGlob = glob.sync(specsPath);
 
-  let lintResult;
-
   const onRunStart = () => {
     localeAssetsProcessor.prepareLocaleFiles();
-    lintResult = tsLinter.lintSync();
   };
 
   const onRunComplete = () => {
-    if (lintResult && lintResult.exitCode > 0) {
-      // Pull the logger out of the execution stream to let it print
-      // after karma's coverage reporter.
-      setTimeout(() => {
-        logger.error('Process failed due to linting errors:');
-        lintResult.errors.forEach(error => logger.error(error));
-      }, 10);
-    }
+    setTimeout(() => {
+      tsLinter.lint().then(() => {
+        console.log('DONE!');
+      }).catch((err) => {
+        console.log('ERROR:', err);
+      });
+    });
   };
 
   const onExit = (exitCode) => {
-    if (exitCode === 0) {
-      if (lintResult) {
-        exitCode = lintResult.exitCode;
-      }
-    }
-
     logger.info(`Karma has exited with ${exitCode}.`);
     process.exit(exitCode);
   };
 
   const onBrowserError = () => {
-    const stopper = require('karma').stopper;
-    stopper.stop({}, () => onExit(1));
+    logger.warn('Experienced a browser error, but letting karma retry.');
   };
 
   if (specsGlob.length === 0) {
